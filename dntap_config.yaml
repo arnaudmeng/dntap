@@ -1,0 +1,30 @@
+directories:
+    outdir: path/to/ouput/directory
+
+samples:
+    forward: path/to/sample/reads.left.fq
+    reverse: path/to/sample/reads.right.fq
+
+threads:
+    fastqc: 20
+    trimmomatic: 6
+    trinity: 20
+    transrate: 10
+    transdecoder: 20
+    
+trimmomatic_params:
+    MINLEN:32 SLIDINGWINDOW:10:20 LEADING:5 TRAILING:5
+    
+trinity_params:
+    max_memory: 20G
+    
+transdecoder_params:
+    min_protein_len: 100
+
+software:
+    fastqc: path/to/src/FastQC/fastqc
+    trimmomatic: java -jar path/to/src/Trimmomatic-0.36/trimmomatic-0.36.jar
+    trinity: /home/meng/Utils/trinityrnaseq-Trinity-v2.4.0/Trinity
+    transrate: path/to/src/transrate-1.0.3-linux-x86_64/transrate
+    transdecoder_longorfs: path/to/src/TransDecoder-3.0.1/TransDecoder.LongOrfs
+    transdecoder_predict: path/to/src/TransDecoder-3.0.1/TransDecoder.Predict
