@@ -1,17 +1,66 @@
+################################################################################
+#
+# This is the configuration file to provided to the DNTAP program.
+#
+# It contains paths, inputs and parameters necessary to complete 
+# the pipeline steps.
+#
+# You must fill the "software", "directories" and "samples" part.
+# It is strongly recommanded to use absolute path to indicate software and
+# input file location. 
+# You can use the command "pwd" in the software install location to obtain
+# the absolute path to it. 
+# 
+# Parameters can be changed or leave as it is.
+# For more detailed informations on parameters, we strongly encourage you to 
+# refer to the original software README and tutorial.
+#
+# Fastqc: https://www.bioinformatics.babraham.ac.uk/projects/fastqc/
+# Trimmomatic: http://www.usadellab.org/cms/?page=trimmomatic
+# Trinity: https://github.com/trinityrnaseq/trinityrnaseq/wiki
+# Transrate: http://hibberdlab.com/transrate/
+# Transdecoder: https://transdecoder.github.io/
+# Interproscan: https://github.com/ebi-pf-team/interproscan/wiki/HowToRun
+#
+# date: 07/2017
+#
+################################################################################
+
+
+software:
+    # You must provide absolute path to the executable file
+    # e.g. fastqc: /path/to/fastqc/install/directory/fastqc
+    
+    fastqc: path/to/src/FastQC/fastqc
+    trimmomatic: path/to/src/Trimmomatic-0.36/trimmomatic-0.36.jar
+    trinity: /path/to/src/trinityrnaseq-Trinity-v2.4.0/Trinity
+    transrate: /path/to/src/transrate-1.0.3-linux-x86_64/transrate
+    transdecoder_longorfs: /path/to/src/TransDecoder-3.0.1/TransDecoder.LongOrfs
+    transdecoder_predict: /path/to/src/TransDecoder-3.0.1/TransDecoder.Predict
+    interproscan: /path/to/src/interproscan-5.24-63.0/interproscan.sh
+
 directories:
-    outdir: path/to/ouput/directory
+    # The output directory will be created is not existing and will contains
+    # all output results from the pipeline.
+
+    outdir: /path/to/outdir/
 
 samples:
-    forward: path/to/sample/reads.left.fq
-    reverse: path/to/sample/reads.right.fq
+    # You must provide absolute path to paired-end RNA-seq file (.fastq / .fq).
+
+    forward: /path/to/sample/reads.left.fq
+    reverse: /path/to/sample/reads.right.fq
 
 threads:
+    # You can set maximum threads to be use be each step.
+
     fastqc: 20
     trimmomatic: 6
     trinity: 20
-    transrate: 10
+    transrate: 20
     transdecoder: 20
-    
+    interproscan: 20
+
 trimmomatic_params:
     MINLEN:32 SLIDINGWINDOW:10:20 LEADING:5 TRAILING:5
     
@@ -20,11 +69,7 @@ trinity_params:
     
 transdecoder_params:
     min_protein_len: 100
-
-software:
-    fastqc: path/to/src/FastQC/fastqc
-    trimmomatic: java -jar path/to/src/Trimmomatic-0.36/trimmomatic-0.36.jar
-    trinity: /home/meng/Utils/trinityrnaseq-Trinity-v2.4.0/Trinity
-    transrate: path/to/src/transrate-1.0.3-linux-x86_64/transrate
-    transdecoder_longorfs: path/to/src/TransDecoder-3.0.1/TransDecoder.LongOrfs
-    transdecoder_predict: path/to/src/TransDecoder-3.0.1/TransDecoder.Predict
+    
+interproscan_params:
+    out_format: tsv
+    db: TIGRFAM, SFLD, ProDom, Hamap, SMART, CDD, ProSiteProfiles, ProSitePatterns, SUPERFAMILY, PRINTS, PANTHER, Gene3D, PIRSF, Pfam, Coils

@@ -45,7 +45,7 @@ TRANSRATE_DIR = OUT_DIR + "transrate_out"
 TRANSDECODER_DIR = OUT_DIR + "transdecoder_out"
 INTERPROSCAN_DIR = OUT_DIR + "interproscan_out"
 
-# Software launch command
+# Software executable
 fastqc = config["software"]["fastqc"]
 trimmomatic = config["software"]["trimmomatic"]
 trinity = config["software"]["trinity"]
@@ -54,15 +54,18 @@ transdecoder_longorfs = config["software"]["transdecoder_longorfs"]
 transdecoder_predict = config["software"]["transdecoder_predict"]
 interproscan = config["software"]["interproscan"]
 
+
 # ALL
 rule all:
     input:
-        fastqc_raw_out = FASTQC_RAW_DIR,
-        fastqc_trimmed_out = FASTQC_TRIMMED_DIR,
-        transrate_out = TRANSRATE_DIR,
-        interproscan_out = INTERPROSCAN_DIR + "/interproscan.out"    
-        ,
-# FASTQC : evaluate quality of raw FASTQ files
+        fastqc_raw_out = FASTQC_RAW_DIR,            # FASTQC on raw FASTQ
+        fastqc_trimmed_out = FASTQC_TRIMMED_DIR,    # FASTQC on filtered FASTQ
+        transrate_out = TRANSRATE_DIR,              # assembly evaluation
+        interproscan_out = INTERPROSCAN_DIR         # final results
+        
+
+# FASTQC: This rule is use to generate an evaluation report raw FASTQ files 
+# provided by the user.
 rule raw_fastqc:
     input:
         r1 = SAMPLES["forward"],
@@ -84,7 +87,8 @@ rule raw_fastqc:
         --threads {threads} &> {log}
         """
 
-# TRIMMOMATIC : designed to trim and clean FASTQ files
+
+# TRIMMOMATIC: This rule is use to filter raw FASTQ files. 
 rule trimmomatic:
     input:
         r1 = SAMPLES["forward"],
@@ -113,7 +117,9 @@ rule trimmomatic:
             {params.trimmomatic_params} 2> {log}
         """
 
-# FASTQC : evaluate quality of trimmed FASTQ files
+
+# FILTERED FASTQC: This rule is use to generate an evaluation report on 
+# filtered FASTQ files previously processed by Trimmomatic.
 rule trim_fastqc:
     input:
         r1 = TRIMMOMATIC_DIR + "forward.trimmomatic.paired.fastq",
@@ -135,7 +141,9 @@ rule trim_fastqc:
         --threads {threads} &> {log}
         """
 
-# TRINITY : designed to assemble de novo RNA-seq data
+
+# TRINITY: This rule is use to de novo assemble filtered FASTQ files into 
+# contigs. 
 rule trinity:
     input:
         left = TRIMMOMATIC_DIR + "forward.trimmomatic.paired.fastq",
@@ -160,7 +168,9 @@ rule trinity:
         --max_memory {params.max_memory} > {log}
         """
 
-# TRANSRATE : evaluate de novo assembled contigs
+
+# TRANSRATE: This rule is use to generate an evaluation report on previously
+# de novo assembled contigs.
 rule transrate:
     input:
         assembly = TRINITY_DIR + "/Trinity.fasta",
@@ -182,7 +192,9 @@ rule transrate:
         --threads {threads} > {log}
         """
 
-# TRANSDECODER : identifies candidate coding regions within transcript sequences
+
+# TRANSDECODER: This rule is use to predict protein coding domains from 
+# previoudly de novo assemble contigs.
 rule transdecoder:
     input:
         assembly = TRINITY_DIR + "/Trinity.fasta",
@@ -209,4 +221,36 @@ rule transdecoder:
         --cpu {threads} &>> {log}
         
         cd {dir_path}
+        """
+
+
+# INTERPROSCAN: This rule is use to search for functional annotation of 
+# previously predicted protein coding domains.
+rule interproscan:
+    input:
+        prediction = TRANSDECODER_DIR
+    output:
+        interproscan_out = INTERPROSCAN_DIR
+    log:
+        OUT_DIR + "logs/interproscan/interproscan.log"
+    params:
+        transdecoder_out = TRANSDECODER_DIR + "/Trinity.fasta.transdecoder.pep",
+        out_format = config["interproscan_params"]["out_format"],
+        db = config["interproscan_params"]["db"]
+    threads: 
+        config["threads"]["interproscan"]
+    shell:
+        """
+        mkdir {output.interproscan_out}
+        
+        sed -i 's/*//g' {params.transdecoder_out} 
+        
+        {interproscan} \
+        -i {params.transdecoder_out} \
+        -d {output.interproscan_out} \
+        -f {params.out_format} \
+        -appl {params.db} \
+        -cpu {threads} \
+        -dp \
+        --goterms &> {log}
         """
