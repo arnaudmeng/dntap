@@ -80,6 +80,7 @@ rule raw_fastqc:
         OUT_DIR + "logs/fastqc/raw_fastqc.log"
     threads: 
         config["threads"]["fastqc"]
+    message: "Executing FASTQC with {threads} threads on the following files {input.r1} and {input.r2}."
     shell:
         """
         mkdir {output.fastqc_raw_out}
@@ -108,6 +109,7 @@ rule trimmomatic:
         config["threads"]["fastqc"]
     params:
         trimmomatic_params = config["trimmomatic_params"]
+    message: "Executing Trimmomatic with {threads} threads on the following files {input.r1} and {input.r2}."
     shell:
         """
         {trimmomatic} PE \
@@ -134,6 +136,7 @@ rule trim_fastqc:
         OUT_DIR + "logs/fastqc/trimmed_fastqc.log"
     threads: 
         config["threads"]["fastqc"]
+    message: "Executing FASTQC with {threads} threads on the following files {input.r1} and {input.r2}."
     shell:
         """
         mkdir {output.fastqc_trimmed_out}
@@ -161,6 +164,7 @@ rule trinity:
         trinity_dir = TRINITY_DIR
     threads: 
         config["threads"]["trinity"]
+    message: "Executing Trinity with {threads} threads on the following files {input.left} and {input.right}."
     shell:
         """
         {trinity} \
@@ -186,6 +190,7 @@ rule transrate:
         OUT_DIR + "logs/transrate/transrate.log"
     threads: 
         config["threads"]["transrate"]
+    message: "Executing Transrate with on the following files {input.assembly}."
     shell:
         """
         {transrate} \
@@ -210,6 +215,7 @@ rule transdecoder:
         min_protein_len = config["transdecoder_params"]["min_protein_len"],
     threads: 
         config["threads"]["transdecoder"]
+    message: "Executing TransDecoder with {threads} threads on the following files {input.assembly}."
     shell:
         """
         mkdir {output.transdecoder_out}
@@ -243,6 +249,7 @@ rule interproscan:
         db = config["interproscan_params"]["db"]
     threads: 
         config["threads"]["interproscan"]
+    message: "Executing InterProScan with {threads} threads on the following files {input.prediction}."
     shell:
         """
         mkdir {output.interproscan_out}
