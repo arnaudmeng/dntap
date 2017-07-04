@@ -19,6 +19,9 @@
 #   --configfile <config.yaml> \
 #   --cores <max_n_cores>
 # 
+# To generate pipeline diagram: 
+# > snakemake --snakefile dntap.py --dag | dot -Tpng > diag1.png
+#
 ################################################################################
 
 # Imports
@@ -72,6 +75,7 @@ rule raw_fastqc:
         r2 = SAMPLES["reverse"]
     output:
         fastqc_raw_out = FASTQC_RAW_DIR
+    priority: 50
     log:
         OUT_DIR + "logs/fastqc/raw_fastqc.log"
     threads: 
