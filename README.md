@@ -41,6 +41,9 @@ However it requires installation for:
 + **[Trinity](https://github.com/trinityrnaseq/trinityrnaseq/wiki/Installing-Trinity)** (2.4.0)
 + **[InterProScan](https://github.com/ebi-pf-team/interproscan/wiki/HowToDownload)** (v5.24-63)
 
+Note that the current version of the pipeline do not take advantages of the `ipr_lookup service` of **InterProScan**. 
+However you need to download and install the `Panther` database.       
+
 ## Configuration file
 
 ### Software location
@@ -61,10 +64,6 @@ software:
 ```
 
 If **Trinity** install location is `/usr/local/trinityrnaseq-Trinity-v2.4.0/Trinity`
-
-```h
-trinity: /path/to/src/trinityrnaseq-Trinity-v2.4.0/Trinity
-```
 Simply remplace the absolute path location in the `dntap_config.yaml` as follow:
 ```h
 trinity: /usr/local/trinityrnaseq-Trinity-v2.4.0/Trinity
@@ -80,15 +79,33 @@ forward: /path/to/sample/reads.left.fq
 reverse: /path/to/sample/reads.right.fq
 ```
 
+And change parameters if needed:
+```h
+trimmomatic_params:
+    MINLEN:32 SLIDINGWINDOW:10:20 LEADING:5 TRAILING:5
+    
+trinity_params:
+    max_memory: 20G
+    
+transdecoder_params:
+    min_protein_len: 100
+    
+interproscan_params:
+    out_format: tsv
+    db: TIGRFAM, SFLD, ProDom, Hamap, SMART, CDD, ProSiteProfiles, ProSitePatterns, SUPERFAMILY, PRINTS, PANTHER, Gene3D, PIRSF, Pfam, Coils
+```
 
+You also have the possibility to set maximum threads to be use by each step of the pipeline:
+```h
+threads:
+    # You can set maximum threads to be use be each step.
 
+    fastqc: 20
+    trimmomatic: 6
+    trinity: 20
+    transrate: 20
+    transdecoder: 20
+    interproscan: 20
+```
 
-
-
-
-
-
-
-
-
-
+Note that it cannot exceed the maximum number provided in the command line `--cores 20`.
