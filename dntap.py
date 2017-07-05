@@ -20,7 +20,10 @@
 #   --cores <max_n_cores>
 # 
 # To generate pipeline diagram: 
-# > snakemake --snakefile dntap.py --dag | dot -Tpng > diag1.png
+# > snakemake \
+#   --snakefile dntap.py \
+#   --configfile dntap_config.yaml \
+#   --dag | dot -Tpng > diag1.png
 #
 ################################################################################
 
