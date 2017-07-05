@@ -1,6 +1,6 @@
 # The dntap (*de novo* transcriptome analysis pipeline)
 
-## Description
+## About
 This pipeline has been designed to process **RNA-seq data**. It allows to obtain results and reports from your data very easily by simply fill a configuration file and launch a command line. 
 It takes advantages of **[Snakemake](https://snakemake.readthedocs.io/en/stable/)** workflow engine. You can refer to the Snakemake **[publication](https://academic.oup.com/bioinformatics/article/28/19/2520/290322/Snakemake-a-scalable-bioinformatics-workflow)** for more details.
 
@@ -15,6 +15,8 @@ The pipeline is composed of 6 steps:
 
 Note that this version of the pipeline only supported paired-end `.fastq`
 
+## Snakemake auto-generated diagram
+
 ![alt text](https://github.com/arnaudmeng/dntap/blob/master/extra/diag1.png "pipeline diagram")
 
 ## Quick example
@@ -28,7 +30,11 @@ snakemake --snakefile dntap.py --configfile dntap_config.yaml --cores 20
 ```
 + It is possible to provided a naximum of cores to be used by `dntap.py` steps, here: `--cores 20`.
 
-## Pre-requirement and installation
+## Version
+
+1.0
+
+## Pre-requirements and installation
 
 The pipeline is provided with ready-to-use binairies and sources for:
 
@@ -111,3 +117,42 @@ threads:
 ```
 
 Note that it cannot exceed the maximum number provided in the command line `--cores 20`.
+
+## Contacts
+
+**Arnaud Meng**
+Ph.D. student in Bioinformatics
+
+Team High-Throughput Sequencing Data Analysis in Genomics
+Université Pierre et Marie Curie
+[Institut de Biologie Paris Seine](http://www.ibps.upmc.fr/fr/IBPS/annuaire/2966-Arnaud-Meng)
+UMR7138 - Evolution
+
+[Linkedin](https://www.linkedin.com/in/arnaud-meng-24952286/?ppe=1) | [ResearchGate](https://www.researchgate.net/profile/Arnaud_Meng?ev=hdr_xprf)
+
+## References
+
+**A [first version](https://f1000research.com/posters/5-2643) of the pipeline was presented at European Council of Computational Biology (ECCB) 2016**
+
+Meng A, Bittner L, Corre E et al. De novo transcriptome assembly dedicated pipeline and its specific application to non-model marine planktonic organisms  [version 1; not peer reviewed]. F1000Research 2016, 5:2643 (poster) (doi: 10.7490/f1000research.1113381.1)
+
+#### Included softwares
+
+**[FASTQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)**
+S. Andrews. FastQC A Quality Control tool for High Throughput Sequence Data. (2014)
+
+**[Trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic)**
+Bolger, A. M., Lohse, M. & Usadel, B. Trimmomatic: A flexible trimmer for Illumina Sequence Data. Bioinformatics btu170 (2014). doi:10.1093/bioinformatics/btu170
+
+**[Trinity](https://github.com/trinityrnaseq/trinityrnaseq/wiki)**
+Grabherr, M. G. et al. Full-length transcriptome assembly from RNA-Seq data without a reference genome (Trinity). Nat Biotech 29, 644–652 (2011).
+
+**[Transrate](http://hibberdlab.com/transrate/)**
+Smith-Unna, R., Boursnell, C., Patro, R., Hibberd, J. & Kelly, S. TransRate: reference free quality assessment of de novo transcriptome assemblies. Genome Res. gr.196469.115 (2016). doi:10.1101/gr.196469.115
+
+**[Transdecoder](https://transdecoder.github.io/)**
+Haas, B. J. et al. De novo transcript sequence reconstruction from RNA-seq using the Trinity platform for reference generation and analysis. Nat. Protocols 8, 1494–1512 (2013).
+
+**[InterProScan 5](https://github.com/ebi-pf-team/interproscan/wiki/HowToRun)**
+Jones, P. et al. InterProScan 5: genome-scale protein function classification. Bioinformatics 30, 1236–1240 (2014).
+
