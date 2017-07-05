@@ -120,12 +120,16 @@ Note that it cannot exceed the maximum number provided in the command line `--co
 
 ## Contacts
 
-**Arnaud Meng**__
+**Arnaud Meng**
+
 Ph.D. student in Bioinformatics
 
-Team High-Throughput Sequencing Data Analysis in Genomics__
-Université Pierre et Marie Curie__
-[Institut de Biologie Paris Seine](http://www.ibps.upmc.fr/fr/IBPS/annuaire/2966-Arnaud-Meng)__
+Team High-Throughput Sequencing Data Analysis in Genomics
+
+Université Pierre et Marie Curie
+
+[Institut de Biologie Paris Seine](http://www.ibps.upmc.fr/fr/IBPS/annuaire/2966-Arnaud-Meng)
+
 UMR7138 - Evolution
 
 [Linkedin](https://www.linkedin.com/in/arnaud-meng-24952286/?ppe=1) | [ResearchGate](https://www.researchgate.net/profile/Arnaud_Meng?ev=hdr_xprf)
