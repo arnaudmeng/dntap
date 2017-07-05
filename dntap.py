@@ -29,9 +29,6 @@ import os
 
 # Get current working directory  
 dir_path = os.getcwd()
-
-# Configuration file
-configfile: "/home/meng/PIPELINE/pipeline_v4/config.yaml"
     
 # User defined samples
 SAMPLES = config["samples"] if config["samples"] is not None else []
@@ -112,7 +109,7 @@ rule trimmomatic:
     message: "Executing Trimmomatic with {threads} threads on the following files {input.r1} and {input.r2}."
     shell:
         """
-        {trimmomatic} PE \
+        java -jar {trimmomatic} PE \
             -threads {threads} \
             {input.r1} \
             {input.r2} \

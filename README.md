@@ -42,7 +42,7 @@ However it requires installation for:
 + **[InterProScan](https://github.com/ebi-pf-team/interproscan/wiki/HowToDownload)** (v5.24-63)
 
 Note that the current version of the pipeline do not take advantages of the `ipr_lookup service` of **InterProScan**. 
-However you need to download and install the `Panther` database.       
+However you need to download and install the `Panther` database if you want InterProScan to perform research on it.       
 
 ## Configuration file
 
@@ -71,7 +71,7 @@ trinity: /usr/local/trinityrnaseq-Trinity-v2.4.0/Trinity
 
 ### Inputs and parameters
 
-Finally you can provide `.fastq` files location to be process
+Finally you can provide `.fastq` files location to be process by the pipeline.
 ```h
 # You must provide absolute path to paired-end RNA-seq file (.fastq / .fq).
 
@@ -79,7 +79,7 @@ forward: /path/to/sample/reads.left.fq
 reverse: /path/to/sample/reads.right.fq
 ```
 
-And change parameters if needed:
+Change parameters if needed:
 ```h
 trimmomatic_params:
     MINLEN:32 SLIDINGWINDOW:10:20 LEADING:5 TRAILING:5
