@@ -15,7 +15,7 @@ The pipeline is composed of 6 steps:
 
 Note that this version of the pipeline only supported paired-end `.fastq`
 
-![alt text](https://github.com/arnaudmeng/dntap/extra/diag1.png "pipeline diagram")
+![alt text](https://github.com/arnaudmeng/dntap/blob/master/extra/diag1.png "pipeline diagram")
 
 ## Quick example
 
