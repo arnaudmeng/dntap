@@ -72,7 +72,7 @@ software:
 ```
 
 If **Trinity** install location is `/usr/local/trinityrnaseq-Trinity-v2.4.0/Trinity`
-Simply remplace the absolute path location in the `dntap_config.yaml` as follow:
+simply remplace the absolute path location in the `dntap_config.yaml` as follow:
 ```h
 trinity: /usr/local/trinityrnaseq-Trinity-v2.4.0/Trinity
 ```
@@ -120,12 +120,12 @@ Note that it cannot exceed the maximum number provided in the command line `--co
 
 ## Contacts
 
-**Arnaud Meng**
+**Arnaud Meng**__
 Ph.D. student in Bioinformatics
 
-Team High-Throughput Sequencing Data Analysis in Genomics
-Université Pierre et Marie Curie
-[Institut de Biologie Paris Seine](http://www.ibps.upmc.fr/fr/IBPS/annuaire/2966-Arnaud-Meng)
+Team High-Throughput Sequencing Data Analysis in Genomics__
+Université Pierre et Marie Curie__
+[Institut de Biologie Paris Seine](http://www.ibps.upmc.fr/fr/IBPS/annuaire/2966-Arnaud-Meng)__
 UMR7138 - Evolution
 
 [Linkedin](https://www.linkedin.com/in/arnaud-meng-24952286/?ppe=1) | [ResearchGate](https://www.researchgate.net/profile/Arnaud_Meng?ev=hdr_xprf)
@@ -134,7 +134,7 @@ UMR7138 - Evolution
 
 **A [first version](https://f1000research.com/posters/5-2643) of the pipeline was presented at European Council of Computational Biology (ECCB) 2016**
 
-Meng A, Bittner L, Corre E et al. De novo transcriptome assembly dedicated pipeline and its specific application to non-model marine planktonic organisms  [version 1; not peer reviewed]. F1000Research 2016, 5:2643 (poster) (doi: 10.7490/f1000research.1113381.1)
+Meng A, Bittner L, Corre E et al. De novo transcriptome assembly dedicated pipeline and its specific application to non-model marine planktonic organisms. F1000Research 2016, 5:2643 (poster) (doi: 10.7490/f1000research.1113381.1)
 
 #### Included softwares
 
