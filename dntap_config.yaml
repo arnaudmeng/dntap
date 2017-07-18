@@ -46,6 +46,9 @@ directories:
     outdir: /path/to/outdir/
 
 data_type:
+    # You must specify either 'pe' or 'se' depending on the use of paired-end 
+    # files of single-end file respectively.
+
     type: pe
 
 samples:

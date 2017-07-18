@@ -13,8 +13,6 @@ The pipeline is composed of 6 steps:
 6. Protein coding domains prediction (**[Transdecoder](https://transdecoder.github.io/)**)
 7. Functional annotation of prediction protein coding domains (**[InterProScan 5](https://github.com/ebi-pf-team/interproscan/wiki/HowToRun)**)
 
-Note that this version of the pipeline only supported paired-end `.fastq`
-
 ## Snakemake auto-generated diagram
 
 ![alt text](https://github.com/arnaudmeng/dntap/blob/master/extra/diag1.png "pipeline diagram")
@@ -79,13 +77,39 @@ trinity: /usr/local/trinityrnaseq-Trinity-v2.4.0/Trinity
 
 ### Inputs and parameters
 
+You must specify in the config file if you are using single-end or paired-end 
+`.fastq` file(s). 
+```h
+data_type:
+    # You must specify either 'pe' or 'se' depending on the use of paired-end 
+    # files of single-end file respectively.
+
+    type: pe
+```
+
 Finally you can provide `.fastq` files location to be process by the pipeline.
 ```h
-# You must provide absolute path to paired-end RNA-seq file (.fastq / .fq).
+samples:
+    # You must provide absolute path to paired-end RNA-seq file (.fastq / .fq).
 
-forward: /path/to/sample/reads.left.fq
-reverse: /path/to/sample/reads.right.fq
+    forward: /path/to/sample/reads.left.fq
+    reverse: /path/to/sample/reads.right.fq
+    single: none
 ```
+
+If you are using single-end `.fastq` file instead if paired-end `.fastq` then 
+simply change as follow:
+```h
+samples:
+    # You must provide absolute path to paired-end RNA-seq file (.fastq / .fq).
+
+    forward: none
+    reverse: none
+    single: /path/to/sample/single.fq
+```
+
+Note that a file called "none" is created in the input `.fastq` directory for 
+algorithm performance. It will be fixed in a further version of the pipeline.
 
 Change parameters if needed:
 ```h
