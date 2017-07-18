@@ -57,37 +57,65 @@ transdecoder_longorfs = config["software"]["transdecoder_longorfs"]
 transdecoder_predict = config["software"]["transdecoder_predict"]
 interproscan = config["software"]["interproscan"]
 
+# function to create fake inputs
+def make_fake_inputs(index):
+        
+    if (index == "pe"): 
+        
+        sample_dir = os.path.dirname(SAMPLES["forward"])
+        fake_file = sample_dir + "/none"
+        os.system("touch " + fake_file)
+        SAMPLES["single"] = fake_file
+        
+    elif (index == "se"): 
+        
+        sample_dir = os.path.dirname(SAMPLES["single"])
+        fake_file = sample_dir + "/none"
+        os.system("touch " + fake_file)
+        SAMPLES["forward"] = fake_file
+        SAMPLES["reverse"] = fake_file
+
+# function to define inputs to RAW_FASTQC rule
+def define_raw_fastqc_inputs(wildcards):
+    data_type = config["data_type"]["type"]
+    
+    if (data_type == "pe"):
+        input = [SAMPLES["forward"],SAMPLES["reverse"]]
+        
+    elif (data_type == "se"):
+        input = SAMPLES["single"]
+        
+    return input
+
+# creating fake files
+make_fake_inputs(config["data_type"]["type"])
 
 # ALL
 rule all:
     input:
         fastqc_raw_out = FASTQC_RAW_DIR,            # FASTQC on raw FASTQ
-        fastqc_trimmed_out = FASTQC_TRIMMED_DIR,    # FASTQC on filtered FASTQ
+        interproscan_out = INTERPROSCAN_DIR,        # final results
         transrate_out = TRANSRATE_DIR,              # assembly evaluation
-        interproscan_out = INTERPROSCAN_DIR         # final results
-        
+        fastqc_trimmed_out = FASTQC_TRIMMED_DIR,    # FASTQC on filtered FASTQ
+
 
 # FASTQC: This rule is use to generate an evaluation report raw FASTQ files 
 # provided by the user.
 rule raw_fastqc:
     input:
-        r1 = SAMPLES["forward"],
-        r2 = SAMPLES["reverse"]
+        fastq = define_raw_fastqc_inputs
     output:
         fastqc_raw_out = FASTQC_RAW_DIR
-    priority: 50
     log:
         OUT_DIR + "logs/fastqc/raw_fastqc.log"
     threads: 
         config["threads"]["fastqc"]
-    message: "Executing FASTQC with {threads} threads on the following files {input.r1} and {input.r2}."
     shell:
         """
         mkdir {output.fastqc_raw_out}
         
         {fastqc} \
-        {input.r1} \
-        {input.r2} \
+        {input.fastq} \
         --outdir {output.fastqc_raw_out} \
         --threads {threads} &> {log}
         """
@@ -96,65 +124,84 @@ rule raw_fastqc:
 # TRIMMOMATIC: This rule is use to filter raw FASTQ files. 
 rule trimmomatic:
     input:
-        r1 = SAMPLES["forward"],
-        r2 = SAMPLES["reverse"]
+        forward = SAMPLES["forward"],
+        reverse = SAMPLES["reverse"],
+        single = SAMPLES["single"]
     output:
-        r1_paired = TRIMMOMATIC_DIR + "forward.trimmomatic.paired.fastq",
-        r1_unpaired = TRIMMOMATIC_DIR + "forward.trimmomatic.unpaired.fastq",
-        r2_paired = TRIMMOMATIC_DIR + "reverse.trimmomatic.paired.fastq",
-        r2_unpaired = TRIMMOMATIC_DIR + "reverse.trimmomatic.unpaired.fastq"
+        out = TRIMMOMATIC_DIR
     log:
         OUT_DIR + "logs/trimmomatic/trimmomatic.log"
     threads: 
         config["threads"]["fastqc"]
     params:
         trimmomatic_params = config["trimmomatic_params"]
-    message: "Executing Trimmomatic with {threads} threads on the following files {input.r1} and {input.r2}."
-    shell:
-        """
-        java -jar {trimmomatic} PE \
+    run:
+        if (config["data_type"]["type"] == "pe"):
+            
+            shell("""
+            {trimmomatic} PE \
             -threads {threads} \
-            {input.r1} \
-            {input.r2} \
-            {output.r1_paired} \
-            {output.r1_unpaired} \
-            {output.r2_paired} \
-            {output.r2_unpaired} \
+            {input.forward} \
+            {input.reverse} \
+            {output.out}forward.trimmomatic.paired.fastq  \
+            {output.out}forward.trimmomatic.unpaired.fastq \
+            {output.out}reverse.trimmomatic.paired.fastq \
+            {output.out}reverse.trimmomatic.unpaired.fastq \
             {params.trimmomatic_params} 2> {log}
-        """
+            """)
+            
+        elif (config["data_type"]["type"] == "se"):
+            
+            shell("""
+            {trimmomatic} SE \
+            -threads {threads} \
+            {input.single} \
+            {output.out}single.trimmomatic.fastq \
+            {params.trimmomatic_params} 2> {log}
+            """)
 
 
 # FILTERED FASTQC: This rule is use to generate an evaluation report on 
 # filtered FASTQ files previously processed by Trimmomatic.
 rule trim_fastqc:
     input:
-        r1 = TRIMMOMATIC_DIR + "forward.trimmomatic.paired.fastq",
-        r2 = TRIMMOMATIC_DIR + "reverse.trimmomatic.paired.fastq"
+        TRIMMOMATIC_DIR,
     output:
         fastqc_trimmed_out = FASTQC_TRIMMED_DIR
     log:
         OUT_DIR + "logs/fastqc/trimmed_fastqc.log"
     threads: 
         config["threads"]["fastqc"]
-    message: "Executing FASTQC with {threads} threads on the following files {input.r1} and {input.r2}."
-    shell:
-        """
-        mkdir {output.fastqc_trimmed_out}
-                
-        {fastqc} \
-        {input.r1} \
-        {input.r2} \
-        --outdir {output.fastqc_trimmed_out} \
-        --threads {threads} &> {log}
-        """
+    run:
+        if (config["data_type"]["type"] == "pe"):
+            
+            shell("""
+            mkdir {output.fastqc_trimmed_out}
+            
+            {fastqc} \
+            {input}/forward.trimmomatic.paired.fastq \
+            {input}/reverse.trimmomatic.paired.fastq \
+            --outdir {output.fastqc_trimmed_out} \
+            --threads {threads} &> {log}
+            """)
+            
+        elif (config["data_type"]["type"] == "se"):
+            
+            shell("""
+            mkdir {output.fastqc_trimmed_out}
+            
+            {fastqc} \
+            {input}/single.trimmomatic.fastq \
+            --outdir {output.fastqc_trimmed_out} \
+            --threads {threads} &> {log}
+            """)
 
 
 # TRINITY: This rule is use to de novo assemble filtered FASTQ files into 
 # contigs. 
 rule trinity:
     input:
-        left = TRIMMOMATIC_DIR + "forward.trimmomatic.paired.fastq",
-        right = TRIMMOMATIC_DIR + "reverse.trimmomatic.paired.fastq"
+        TRIMMOMATIC_DIR
     output:
         trinity_out = TRINITY_DIR + "/Trinity.fasta"
     log:
@@ -164,42 +211,64 @@ rule trinity:
         trinity_dir = TRINITY_DIR
     threads: 
         config["threads"]["trinity"]
-    message: "Executing Trinity with {threads} threads on the following files {input.left} and {input.right}."
-    shell:
-        """
-        {trinity} \
-        --seqType fq \
-        --left {input.left} \
-        --right {input.right} \
-        --output {params.trinity_dir} \
-        --CPU {threads} \
-        --max_memory {params.max_memory} > {log}
-        """
+    run:
+        if (config["data_type"]["type"] == "pe"):
+            
+            shell("""
+            {trinity} \
+            --seqType fq \
+            --left {input}forward.trimmomatic.paired.fastq \
+            --right {input}reverse.trimmomatic.paired.fastq \
+            --output {params.trinity_dir} \
+            --CPU {threads} \
+            --max_memory {params.max_memory} > {log}
+            """)
+            
+        elif (config["data_type"]["type"] == "se"):
+            
+            shell("""
+            {trinity} \
+            --seqType fq \
+            --single {input}single.trimmomatic.fastq \
+            --output {params.trinity_dir} \
+            --CPU {threads} \
+            --max_memory {params.max_memory} > {log}
+            """)
 
 
 # TRANSRATE: This rule is use to generate an evaluation report on previously
 # de novo assembled contigs.
 rule transrate:
     input:
-        assembly = TRINITY_DIR + "/Trinity.fasta",
-        left = TRIMMOMATIC_DIR + "forward.trimmomatic.paired.fastq",
-        right = TRIMMOMATIC_DIR + "reverse.trimmomatic.paired.fastq"
+        TRINITY_DIR + "/Trinity.fasta",
     output:
         transrate_out = TRANSRATE_DIR
     log:
         OUT_DIR + "logs/transrate/transrate.log"
+    params:
+        trimmomatic_dir = TRIMMOMATIC_DIR
     threads: 
         config["threads"]["transrate"]
-    message: "Executing Transrate with on the following files {input.assembly}."
-    shell:
-        """
-        {transrate} \
-        --assembly {input.assembly} \
-        --left {input.left} \
-        --right {input.right} \
-        --output {output.transrate_out} \
-        --threads {threads} > {log}
-        """
+    run:
+        if (config["data_type"]["type"] == "pe"):
+            
+            shell("""
+            {transrate} \
+            --assembly {input} \
+            --left {params.trimmomatic_dir}/forward.trimmomatic.paired.fastq \
+            --right {params.trimmomatic_dir}/reverse.trimmomatic.paired.fastq \
+            --output {output.transrate_out} \
+            --threads {threads} > {log}
+            """)
+            
+        elif (config["data_type"]["type"] == "se"):
+            
+            shell("""
+            {transrate} \
+            --assembly {input} \
+            --output {output.transrate_out} \
+            --threads {threads} > {log}
+            """)
 
 
 # TRANSDECODER: This rule is use to predict protein coding domains from 
@@ -215,7 +284,6 @@ rule transdecoder:
         min_protein_len = config["transdecoder_params"]["min_protein_len"],
     threads: 
         config["threads"]["transdecoder"]
-    message: "Executing TransDecoder with {threads} threads on the following files {input.assembly}."
     shell:
         """
         mkdir {output.transdecoder_out}
@@ -249,7 +317,6 @@ rule interproscan:
         db = config["interproscan_params"]["db"]
     threads: 
         config["threads"]["interproscan"]
-    message: "Executing InterProScan with {threads} threads on the following files {input.prediction}."
     shell:
         """
         mkdir {output.interproscan_out}
