@@ -97,8 +97,8 @@ samples:
     single: none
 ```
 
-If you are using single-end `.fastq` file instead if paired-end `.fastq` then 
-simply change as follow:
+If you are using single-end `.fastq` file instead if paired-end `.fastq` files 
+then change as follow:
 ```h
 samples:
     # You must provide absolute path to paired-end RNA-seq file (.fastq / .fq).
@@ -109,7 +109,7 @@ samples:
 ```
 
 Note that a file called "none" is created in the input `.fastq` directory for 
-algorithm performance. It will be fixed in a further version of the pipeline.
+algorithm facilities. It will be fixed in a further version of the pipeline.
 
 Change parameters if needed:
 ```h
