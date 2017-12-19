@@ -252,18 +252,11 @@ rule transrate:
     run:
         if (config["data_type"]["type"] == "pe"):
             
-            # shell("""
-            # {transrate} \
-            # --assembly {input} \
-            # --left {params.trimmomatic_dir}/forward.trimmomatic.paired.fastq \
-            # --right {params.trimmomatic_dir}/reverse.trimmomatic.paired.fastq \
-            # --output {output.transrate_out} \
-            # --threads {threads} > {log}
-            # """)
-
             shell("""
             {transrate} \
             --assembly {input} \
+            --left {params.trimmomatic_dir}/forward.trimmomatic.paired.fastq \
+            --right {params.trimmomatic_dir}/reverse.trimmomatic.paired.fastq \
             --output {output.transrate_out} \
             --threads {threads} > {log}
             """)
